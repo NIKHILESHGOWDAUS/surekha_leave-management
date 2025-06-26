@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  postgres:  # ← changed from 'db' to 'postgres'
+    image: postgres:13
+    container_name: leave_postgres
+    ports:
+      - "5768:5432"
+    environment:
+      POSTGRES_DB: leave_management
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  backend:
+    build:
+      context: ./Backend
+    container_name: leave_backend
+    ports:
+      - "3606:3606"
+    depends_on:
+      - postgres
+    volumes:
+      - ./Backend/uploads:/app/uploads
+    environment:
+      - PORT=3606
+      - PGUSER=postgres
+      - PGPASSWORD=admin123
+      - PGDATABASE=leave_management
+      - PGHOST=postgres  # ← updated to match renamed service
+      - PGPORT=5432
+
+  employee-leave:
+    build:
+      context: ./employee-leave
+    container_name: employee_leave_ui
+    ports:
+      - "8910:80"
+    depends_on:
+      - backend
+
+  hr-leave:
+    build:
+      context: ./hr-leave
+    container_name: hr_leave_ui
+    ports:
+      - "8103:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+
