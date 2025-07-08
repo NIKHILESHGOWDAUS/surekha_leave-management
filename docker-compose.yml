@@ -5,7 +5,7 @@ services:
     image: postgres:13
     container_name: leave_postgres
     ports:
-      - "5768:5432"
+      - "5600:5432"
     environment:
       POSTGRES_DB: leave_management
       POSTGRES_USER: postgres
@@ -19,13 +19,13 @@ services:
       context: ./Backend
     container_name: leave_backend
     ports:
-      - "3606:3606"
+      - "3600:3600"
     depends_on:
       - postgres
     volumes:
       - ./Backend/uploads:/app/uploads
     environment:
-      - PORT=3606
+      - PORT=3600
       - PGUSER=postgres
       - PGPASSWORD=admin123
       - PGDATABASE=leave_management
@@ -37,7 +37,7 @@ services:
       context: ./employee-leave
     container_name: employee_leave_ui
     ports:
-      - "8910:80"
+      - "8600:80"
     depends_on:
       - backend
 
@@ -46,7 +46,7 @@ services:
       context: ./hr-leave
     container_name: hr_leave_ui
     ports:
-      - "8103:80"
+      - "86001:80"
     depends_on:
       - backend
 
